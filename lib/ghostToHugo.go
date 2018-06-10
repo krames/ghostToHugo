@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -193,7 +194,8 @@ func (gth *GhostToHugo) exportPosts(posts <-chan post) {
 			}
 			switch {
 			case p.Content != "":
-				page.SetSourceContent([]byte(p.Content))
+				fixedContent := strings.Replace(p.Content, "/content/", "/", -1)
+				page.SetSourceContent([]byte(fixedContent))
 			case p.MobileDoc != "":
 				page.SetSourceContent([]byte(p.mobiledocMarkdown()))
 			default:

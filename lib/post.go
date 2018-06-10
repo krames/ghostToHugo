@@ -28,20 +28,16 @@ type post struct {
 	Status          string          `json:"status"`
 	MetaDescription string          `json:"meta_description"`
 	AuthorID        json.RawMessage `json:"author_id"`
-	PublishedAt     json.RawMessage `json:"published_at"`
-	CreatedAt       json.RawMessage `json:"created_at"`
+	PublishedAt     time.Time       `json:"published_at"`
+	CreatedAt       time.Time       `json:"created_at"`
 
-	Published time.Time
-	Created   time.Time
-	IsDraft   bool
-	IsPage    bool
-	Author    string
-	Tags      []string
+	IsDraft bool
+	IsPage  bool
+	Author  string
+	Tags    []string
 }
 
 func (p *post) populate(gi *ghostInfo, gth *GhostToHugo) {
-	p.Published = gth.parseTime(p.PublishedAt)
-	p.Created = gth.parseTime(p.CreatedAt)
 	p.IsDraft = p.Status == "draft"
 	p.IsPage = parseBool(p.Page)
 
@@ -124,9 +120,9 @@ func (p post) metadata() map[string]interface{} {
 
 	switch p.IsDraft {
 	case true:
-		metadata["date"] = p.Created
+		metadata["date"] = p.CreatedAt
 	case false:
-		metadata["date"] = p.Published
+		metadata["date"] = p.PublishedAt
 	}
 	metadata["title"] = p.Title
 	metadata["draft"] = p.IsDraft
